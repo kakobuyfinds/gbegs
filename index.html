@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="index,follow,max-snippet:-1">
+  <meta name="theme-color" content="#11291f">
+  <title>SuperBuy spreadsheet | CAFANS Finds, USD Prices &amp; QC Checklist</title>
+  <meta name="description" content="Browse SuperBuy spreadsheet finds from CAFANS in USD. Filter shoes and streetwear, download a CSV, and check sizing, warehouse photos and shipping costs.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SuperBuy spreadsheet | CAFANS Finds &amp; Buying Guide">
+  <meta property="og:description" content="Browse CAFANS finds in USD and build a shortlist with size, QC and shipping checks.">
+  <!--
+    index.html
+    Competitive review: sheetssuperbuy.com/browse groups items by category and offers QC guidance.
+    superbuys.store uses searchable categories and buying guides. superbuybuyss.com/spreadsheet/shoes/
+    shows USD prices on product rows. This page combines an attributed CAFANS selection with a
+    downloadable filtered CSV, category-specific photo checks and an all-in budget calculator.
+    Catalog source: https://cafans.com/ (Featured Product Finds). Prices are a snapshot.
+    Google and Bing submission is pending a public deployment URL and verified site access.
+    After deployment, add the public URL as the self-referencing canonical. Request indexing in
+    Google Search Console URL Inspection and submit the URL in Bing Webmaster Tools URL Submission.
+    https://support.google.com/webmasters/answer/12482179
+    https://www.bing.com/webmasters/help/URL-Submission-62f2860b
+  -->
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #15281e;
+      --muted: #4b6155;
+      --paper: #f6f5ee;
+      --card: #fffef9;
+      --line: #d6ded2;
+      --dark: #11291f;
+      --lime: #daf29c;
+      --green: #24583c;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.6 system-ui, sans-serif; }
+    .wrap { width: min(1120px, calc(100% - 36px)); margin-inline: auto; }
+    .hero { color: white; background: radial-gradient(ellipse at 85% 0%, #315e43, transparent 62%), var(--dark); }
+    .bar { padding-block: 18px; border-bottom: 1px solid #ffffff30; font-size: .88rem; font-weight: 700; }
+    .intro { max-width: 790px; margin-inline: auto; padding: clamp(64px, 10vw, 128px) 0; text-align: center; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2 { font-family: Georgia, serif; line-height: 1.05; letter-spacing: -.045em; }
+    h1 { margin-bottom: 22px; font-size: clamp(2.8rem, 8vw, 6rem); }
+    h2 { margin-bottom: 12px; font-size: clamp(2rem, 5vw, 3.3rem); }
+    h3 { font-size: 1.03rem; line-height: 1.35; }
+    .intro p { max-width: 56ch; margin: 0 auto 26px; color: #e0eadf; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .button, button {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+      padding: 9px 17px; border: 1px solid transparent; border-radius: 9px;
+      font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+    }
+    .primary { background: var(--lime); color: var(--dark); }
+    .secondary { color: white; border-color: #ffffff70; }
+    button { background: var(--green); color: white; }
+    button:disabled { opacity: .6; cursor: default; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: 3px solid #8c630c; outline-offset: 4px;
+    }
+    main > section { padding-block: clamp(38px, 7vw, 74px); border-bottom: 1px solid var(--line); }
+    .muted { color: var(--muted); }
+    .toolbar, .costs { display: grid; gap: 12px; align-items: end; margin: 22px 0 12px; }
+    .toolbar { grid-template-columns: 2fr 1fr auto; }
+    .costs { grid-template-columns: repeat(4, 1fr); }
+    label { display: grid; gap: 5px; font-weight: 650; }
+    input, select {
+      min-width: 0; width: 100%; min-height: 44px; background: var(--card); color: var(--ink);
+      border: 1px solid #9ba99f; border-radius: 8px; padding: 8px 10px; font: inherit;
+    }
+    .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; vertical-align: top; padding: 13px 16px; }
+    thead { background: var(--dark); color: white; }
+    tbody tr + tr { border-top: 1px solid var(--line); }
+    td:last-child, thead th:last-child { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .guide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; }
+    .guide article { padding: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+    .guide p { margin: 0; }
+    .result { display: block; padding-top: 12px; color: var(--green); font-weight: 750; }
+    details { padding: 13px 0; border-bottom: 1px solid var(--line); }
+    details:last-child { border-bottom: 0; }
+    details p { margin: 8px 0 0; max-width: 70ch; }
+    summary { cursor: pointer; font-weight: 700; }
+    footer { padding-block: 24px; color: var(--muted); font-size: .9rem; }
+    [hidden] { display: none !important; }
+    @media (max-width: 680px) {
+      .toolbar, .guide { grid-template-columns: 1fr; }
+      .costs { grid-template-columns: repeat(2, 1fr); }
+      th, td { padding: 10px; }
+    }
+  </style>
+<link rel="canonical" href="https://kakobuyfinds.github.io/gbegs/">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="bar">Shopping agent guide</div>
+      <div class="intro">
+        <h1>SuperBuy spreadsheet</h1>
+        <p>Browse shoes and streetwear from CAFANS, save a shortlist, and check sizing, warehouse photos and shipping costs before ordering.</p>
+        <div class="actions">
+          <a class="button primary" href="https://cafans.com/">SuperBuy spreadsheet</a>
+          <a class="button secondary" href="https://cafans.com/">Buy it now</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section aria-labelledby="catalog-title">
+      <h2 id="catalog-title">CAFANS product directory</h2>
+      <p class="muted" id="catalog-note">Selected listings from CAFANS Featured Product Finds. Estimated item prices are shown in USD. Confirm the current price, size and stock on CAFANS.</p>
+      <div class="toolbar" id="catalog-controls" hidden>
+        <label>Search products <input type="search" id="catalog-search" placeholder="Try hoodie or slides"></label>
+        <label>Category
+          <select id="catalog-category">
+            <option value="">All categories</option>
+            <option>Shoes</option>
+            <option>Hoodies &amp; sweaters</option>
+            <option>T-shirts</option>
+            <option>Jackets</option>
+          </select>
+        </label>
+        <button type="button" id="export">Download CSV</button>
+      </div>
+      <p id="catalog-count" class="muted" role="status" hidden></p>
+      <div class="tablebox">
+        <table aria-labelledby="catalog-title" aria-describedby="catalog-note">
+          <thead><tr><th scope="col">Product</th><th scope="col">Category</th><th scope="col">Est. USD</th></tr></thead>
+          <tbody id="catalog-rows">
+            <tr><th scope="row">Leather Slides</th><td>Shoes</td><td>$62.36</td></tr>
+            <tr><th scope="row">Platform Slides</th><td>Shoes</td><td>$46.67</td></tr>
+            <tr><th scope="row">Heels</th><td>Shoes</td><td>$66.50</td></tr>
+            <tr><th scope="row">Sweatshirt</th><td>Hoodies &amp; sweaters</td><td>$27.50</td></tr>
+            <tr><th scope="row">Thug Club - Rock Hoodie</th><td>Hoodies &amp; sweaters</td><td>$37.22</td></tr>
+            <tr><th scope="row">Corteiz Hoodie</th><td>Hoodies &amp; sweaters</td><td>$27.50</td></tr>
+            <tr><th scope="row">Kanye West Yeezy Bully Black Short Sleeve T-Shirt</th><td>T-shirts</td><td>$22.92</td></tr>
+            <tr><th scope="row">Unisex Embroidered Oversized T-Shirt</th><td>T-shirts</td><td>$32.64</td></tr>
+            <tr><th scope="row">Unisex T-Shirt</th><td>T-shirts</td><td>$29.72</td></tr>
+            <tr><th scope="row">Corteiz Jacket</th><td>Jackets</td><td>$42.78</td></tr>
+            <tr><th scope="row">Jacket</th><td>Jackets</td><td>$84.54</td></tr>
+            <tr><th scope="row">Jacket - 0608260</th><td>Jackets</td><td>$27.50</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="qc-title">
+      <h2 id="qc-title">What to check in warehouse photos</h2>
+      <p class="muted">Save the exact listing and selected variant so you can compare the warehouse quality-control photos with your order.</p>
+      <div class="guide">
+        <article>
+          <h3>Shoes and slides</h3>
+          <p>Check the size label on both shoes, compare heel and sole alignment, and ask for an insole measurement if you need more certainty about fit.</p>
+        </article>
+        <article>
+          <h3>Hoodies and T-shirts</h3>
+          <p>Compare laid-flat chest width and body length with a garment you own. Check print placement, embroidery and the selected color.</p>
+        </article>
+        <article>
+          <h3>Jackets</h3>
+          <p>Check sleeve length, shoulder width, lining and closures. Ask for close-up photos of the zipper or snaps if their condition is hard to see.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="budget-title">
+      <h2 id="budget-title">Estimate your total in USD</h2>
+      <p class="muted" id="budget-note">Convert each quote to USD first. Include domestic shipping and service fees if they apply, and use your destination and packed parcel size for the international quote.</p>
+      <form id="budget" aria-describedby="budget-note" hidden>
+        <div class="costs">
+          <label>Item subtotal <input type="number" name="subtotal" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+          <label>Domestic shipping &amp; fees <input type="number" name="fees" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+          <label>International shipping <input type="number" name="shipping" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+          <label>Estimated taxes &amp; duties <input type="number" name="taxes" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+        </div>
+        <output id="budget-total" class="result" aria-live="polite">Enter a quoted amount to calculate a total.</output>
+      </form>
+      <noscript><p>Add the item subtotal, domestic shipping and fees, international shipping, and any applicable taxes and duties to estimate the total.</p></noscript>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">SuperBuy spreadsheet FAQ</h2>
+      <details>
+        <summary>How do I use this SuperBuy spreadsheet?</summary>
+        <p>Filter the catalog and download the rows you want to compare. Find the item by name on CAFANS, open its detail page, and check the available shopping-agent options for that listing.</p>
+      </details>
+      <details>
+        <summary>What should I save with each product?</summary>
+        <p>Save the original listing URL, size, color, quoted item price, quote date and any measurements you need. Add the agent, warehouse photo status and estimated shipping as you confirm them.</p>
+      </details>
+      <details>
+        <summary>How do I compare two international shipping quotes?</summary>
+        <p>Use the same destination and packed parcel dimensions. Check how each line calculates billable weight, then compare the total quote, delivery estimate, tracking and included services.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="wrap">Independent shopping guide. Catalog selection and listed prices sourced from CAFANS.</footer>
+
+  <script>
+    const search = document.getElementById('catalog-search');
+    const category = document.getElementById('catalog-category');
+    const count = document.getElementById('catalog-count');
+    const exportButton = document.getElementById('export');
+    const rows = Array.from(document.querySelectorAll('#catalog-rows tr'));
+    const budget = document.getElementById('budget');
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
+    function filterCatalog() {
+      const terms = search.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      let visible = 0;
+      for (const row of rows) {
+        const text = Array.from(row.cells, cell => cell.textContent.toLowerCase()).join(' ');
+        const matchesCategory = !category.value || row.cells[1].textContent === category.value;
+        row.hidden = !matchesCategory || !terms.every(term => text.includes(term));
+        if (!row.hidden) visible += 1;
+      }
+      count.textContent = visible ? `Showing ${visible} of ${rows.length} products.` : 'No products match your filters.';
+      exportButton.disabled = visible === 0;
+    }
+
+    function escapeCsv(value) {
+      return '"' + value.replace(/"/g, '""') + '"';
+    }
+
+    exportButton.addEventListener('click', () => {
+      const lines = [['Product', 'Category', 'Estimated price (USD)', 'Catalog source']];
+      for (const row of rows.filter(item => !item.hidden)) {
+        const [name, group, price] = Array.from(row.cells, cell => cell.textContent);
+        lines.push([name, group, price.slice(1), 'https://cafans.com/']);
+      }
+      const csv = lines.map(line => line.map(escapeCsv).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8' }));
+      const download = document.createElement('a');
+      download.href = url;
+      download.download = 'superbuy-spreadsheet-cafans.csv';
+      document.body.append(download);
+      download.click();
+      download.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    budget.addEventListener('submit', event => event.preventDefault());
+    budget.addEventListener('input', () => {
+      const inputs = Array.from(budget.querySelectorAll('input'));
+      const output = document.getElementById('budget-total');
+      if (inputs.some(input => !input.validity.valid)) {
+        output.textContent = 'Enter non-negative USD amounts with up to two decimal places.';
+        return;
+      }
+      if (inputs.every(input => input.value === '')) {
+        output.textContent = 'Enter a quoted amount to calculate a total.';
+        return;
+      }
+      const cents = inputs.reduce((sum, input) => sum + Math.round(Number(input.value) * 100), 0);
+      output.textContent = `Estimated total for entered amounts: ${money.format(cents / 100)} USD`;
+    });
+
+    search.addEventListener('input', filterCatalog);
+    category.addEventListener('change', filterCatalog);
+    filterCatalog();
+    document.getElementById('catalog-controls').hidden = false;
+    count.hidden = false;
+    budget.hidden = false;
+  </script>
+</body>
+</html>
